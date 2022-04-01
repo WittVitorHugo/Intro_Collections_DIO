@@ -1,16 +1,13 @@
 package br.com.dio.collections.list;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ExercicioPropostoTemperatura {
 
     static Scanner input = new Scanner(System.in);
 
     public static List<String> Meses() {
-        List<String> meses = new ArrayList<String>();
+        List<String> meses = new ArrayList<>();
         meses.add("Janeiro");
         meses.add("Fevereiro");
         meses.add("Março");
@@ -30,12 +27,12 @@ public class ExercicioPropostoTemperatura {
 
         List<String> meses = Meses();
 
-        List<Temperatura> temperaturaList = new ArrayList<Temperatura>();
+        List<Temperatura> temperaturaList = new ArrayList<>();
 
         System.out.println("Digite a temperatura de cada mês");
 
         for (int i=0; i<qtdMeses; i++) {
-            System.out.print(meses.get(i).toString() + ": ");
+            System.out.print(meses.get(i) + ": ");
             Double temperatura = input.nextDouble();
             temperaturaList.add(new Temperatura(temperatura, meses.get(i)));
         }
@@ -54,7 +51,7 @@ public class ExercicioPropostoTemperatura {
 
         double media = soma/listaTemperaturas.size();
 
-        System.out.println("Temperatura Média: " + media);
+        System.out.format("Temperatura Média: %.2f", media);
 
         return media;
     }
@@ -63,13 +60,17 @@ public class ExercicioPropostoTemperatura {
 
         double media = MediaTemperatura(listaTemperaturas);
 
+        List<Temperatura> temperaturasAcimaDaMedia = new ArrayList<>();
+
         Iterator<Temperatura> iterator = listaTemperaturas.iterator();
         while (iterator.hasNext()) {
             Temperatura next = iterator.next();
-            if (next.getTemperatura() <= media) listaTemperaturas.remove(next);
+            if (next.getTemperatura() > media) temperaturasAcimaDaMedia.add(next);
         }
 
-        return listaTemperaturas;
+        temperaturasAcimaDaMedia.sort(new ComparadorTemperatura());
+
+        return temperaturasAcimaDaMedia;
     }
 
     public static void main(String[] args) {
@@ -80,10 +81,10 @@ public class ExercicioPropostoTemperatura {
 
         List<Temperatura> temperaturaAcimaDaMedia = TemperaturasAcimaDaMedia(TemperaturaList(qtdMeses));
 
-        System.out.println("Temperaturas acima da média: " + temperaturaAcimaDaMedia);
+        System.out.println("\nTemperaturas acima da média: " + temperaturaAcimaDaMedia);
 
         for (int i=0; i<temperaturaAcimaDaMedia.size(); i++) {
-            System.out.println(temperaturaAcimaDaMedia.get(i).getMes());
+            System.out.println(temperaturaAcimaDaMedia.get(i).getMes() + ": " + temperaturaAcimaDaMedia.get(i).getTemperatura());
         }
 
 
@@ -92,8 +93,8 @@ public class ExercicioPropostoTemperatura {
 
 class Temperatura {
 
-    private String mes;
-    private double temperatura;
+    private final String mes;
+    private final double temperatura;
 
     public Temperatura(double temperatura, String mes) {
         this.temperatura = temperatura;
@@ -114,5 +115,14 @@ class Temperatura {
                 "temperatura=" + temperatura +
                 ", mes='" + mes + '\'' +
                 '}';
+    }
+}
+
+class ComparadorTemperatura implements Comparator<Temperatura> {
+
+
+    @Override
+    public int compare(Temperatura t1, Temperatura t2) {
+        return Double.compare(t2.getTemperatura(), t1.getTemperatura());
     }
 }
